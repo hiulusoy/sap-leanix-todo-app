@@ -1,14 +1,16 @@
 import dotenv from 'dotenv';
 import http from 'http';
-import express, { Application } from 'express';
+import express, {Application} from 'express';
 import path from 'path';
 import moment from 'moment';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import apiRoutes from './routes';
+import {swaggerSpec, swaggerUi} from './config/openapi';
+import {printAllRoutes} from './routes.print';
 import {AppDataSource} from "./config/datasource";
 
-// .env dosyasını yükle
+// Load .env file
 dotenv.config();
 
 // Config ve port ayarları
@@ -22,35 +24,40 @@ const app: Application = express();
 // Veritabanına bağlan
 AppDataSource.initialize().then(r => console.log('Db Connection initialized'));
 
-// CORS yapılandırması
-app.use(cors());
 
-// Middlewares
+// Middleware'lar (öncelikli)
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 
+// API rotaları
+app.use('/api', apiRoutes);
+
+// Swagger API dokümantasyonu
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Statik dosyaları sun
 app.use(express.static(clientFolderPath));
 
-
-// API rotalarını yükle
-app.use('/api', apiRoutes);
-
-// Index route
+// Catch-all rota (en son tanımlanmalı)
 app.get('*', (req, res) => {
   res.sendFile('index.html', { root: clientFolderPath });
 });
 
-// Server oluşturma
+// HTTP Server oluştur
 const server = http.createServer(app);
 server.timeout = 100000;
 
-// Server başlatma
+// Server başlat
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}, environment: ${env}`);
-  console.log('start date ' + moment().subtract(1, 'days').format('YYYYMMDD').toString());
-  console.log('end date ' + moment().format('YYYYMMDD').toString());
+  console.log('start date:', moment().subtract(1, 'days').format('YYYYMMDD'));
+  console.log('end date:', moment().format('YYYYMMDD'));
+
+  // Tüm rotaları logla (debug için)
+  printAllRoutes(app);
 });
 
 export default app;
+
