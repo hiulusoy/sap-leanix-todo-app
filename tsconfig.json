@@ -6,7 +6,9 @@
     "rootDir": "./server",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
   },
   "include": ["server/**/*.ts"],
   "exclude": ["node_modules", "dist"]
