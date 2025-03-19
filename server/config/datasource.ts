@@ -26,6 +26,6 @@ export const AppDataSource = new DataSource({
     entities: [
         path.join(__dirname, '..', 'modules', '**', '*.entity.{ts,js}')
     ],
-    synchronize: process.env.NODE_ENV !== 'production',
+    synchronize: true,
     logging: false,
 });
