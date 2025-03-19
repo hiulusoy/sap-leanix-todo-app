@@ -1,0 +1,105 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="todoForm" novalidate>
+  <mat-card class="todo-card">
+    <mat-card-header>
+      <mat-card-title>{{ pageTitle }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input
+              formControlName="title"
+              matInput
+              placeholder="Title"
+              required
+            />
+            <mat-error *ngIf="todoForm.controls['title'].hasError('required')">
+              Title is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Priority Dropdown -->
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-label>Priority</mat-label>
+            <mat-select formControlName="priority" required>
+              <mat-option *ngFor="let priority of priorities" [value]="priority">
+                {{ priority }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="todoForm.controls['priority'].hasError('required')">
+              Priority is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- State Radio Buttons -->
+      <div class="row">
+        <div class="col">
+          <mat-radio-group aria-label="Todo State" formControlName="state">
+            <mat-radio-button class="radio-gap" value="pending">
+              Pending
+            </mat-radio-button>
+            <mat-radio-button class="radio-gap" value="completed">
+              Completed
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+
+      <!-- Due Date Checkbox -->
+      <div>
+        <mat-checkbox
+          formControlName="hasDueDate">
+          Set Due Date
+        </mat-checkbox>
+      </div>
+
+      <!-- Date Range Picker Component -->
+      <app-date-range-picker
+        *ngIf="hasDueDate"
+        [parentForm]="todoForm"
+        dueDateControlName="dueDate"
+        startDateControlName="startDate">
+      </app-date-range-picker>
+
+      <div class="row">
+        <!-- Label Chip Component -->
+        <app-label-chip
+          (selectedLabelsChange)="onLabelsChange($event)"
+          [selectedLabels]="formLabels">
+        </app-label-chip>
+      </div>
+
+      <!-- Description Field Component (MOVED TO BOTTOM) -->
+      <div class="row">
+        <div class="col description-section">
+          <h3>Task Description</h3>
+          <p class="description-hint">
+            Enter a description or use auto-generate to create one based on the details above.
+            You can also enter at least 3 keywords to guide the generation.
+          </p>
+          <app-description-field
+            [formControlName]="'description'"
+            [parentForm]="todoForm">
+          </app-description-field>
+        </div>
+      </div>
+
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button color="primary" mat-raised-button type="submit">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+      <button (click)="resetForm()" *ngIf="!isEditMode" color="basic" mat-button type="button">
+        Reset
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</form>

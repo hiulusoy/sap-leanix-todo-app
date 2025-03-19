@@ -1,0 +1,159 @@
+/* Main layout styles */
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.container {
+  width: 400px;
+  max-width: 100%;
+  margin: 0 20px 30px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.list {
+  min-height: 100px; /* adjust as needed */
+  position: relative;
+}
+
+.empty-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #aaa;
+}
+
+.list-title {
+  color: #1e293b;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  font-weight: 600;
+  padding-left: 12px;
+  position: relative;
+  letter-spacing: 0.01em;
+}
+
+.list-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  width: 4px;
+  background-color: #0ea5e9;
+  border-radius: 4px;
+}
+
+
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: #0ea5e9;
+  border: none;
+  color: #ffffff;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.fab:hover {
+  background-color: #0284c7;
+  transform: scale(1.05) translateZ(0);
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.45);
+}
+
+.fab:active {
+  transform: scale(0.98) translateZ(0);
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+    margin: 0 auto 20px auto;
+    display: block;
+  }
+
+  .fab {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+.empty-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #aaa;
+}
+
+/* Status Legend */
+.status-legend {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  max-width: 200px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.pending-dot {
+  background-color: #f39121;
+}
+
+.completed-dot {
+  background-color: #3776bb;
+}
+
+.approaching-dot {
+  background-color: #f39121;
+  opacity: 0.7;
+  border: 1px solid rgba(243, 145, 33, 0.8);
+}
+
+.overdue-dot {
+  background-color: #F44336;
+  opacity: 0.7;
+  border: 1px solid rgba(244, 67, 54, 0.8);
+}
+
+.legend-text {
+  font-size: 12px;
+  color: #555;
+  white-space: nowrap;
+}

@@ -1,0 +1,11 @@
+<div class="container">
+  <h1 class="page-title">{{ isEditMode ? 'Edit Todo' : 'Add New Todo' }}</h1>
+
+  <div class="form-container">
+    <app-todo-form
+      (submitted)="onFormSubmitted($event)"
+      [isEditMode]="isEditMode"
+      [todoData]="currentTodo">
+    </app-todo-form>
+  </div>
+</div>

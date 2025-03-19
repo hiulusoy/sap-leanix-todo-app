@@ -1,0 +1,123 @@
+Copyname: Deploy to Amazon ECS
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+env:
+  AWS_REGION: eu-central-1
+  ECR_REGISTRY: 058632741234.dkr.ecr.eu-central-1.amazonaws.com
+  ECR_REPOSITORY: general-container-repo
+  ECS_SERVICE: leanix-todo-service
+  ECS_CLUSTER: leanix-todo-app
+  CONTAINER_NAME: leanix-todo-container
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.event.ref_type == 'branch' && startsWith(github.ref, 'refs/heads/release/') && contains(github.event.commits[0].message, 'Merge branch ''develop''')
+    name: Deploy to ECS
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          echo "image=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}" >> $GITHUB_OUTPUT
+
+      - name: Generate task definition
+        id: generate-task-def
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          mkdir -p .aws
+          cat << EOF > .aws/task-definition.json
+          {
+            "family": "leanix-todo-task",
+            "containerDefinitions": [
+              {
+                "name": "${{ env.CONTAINER_NAME }}",
+                "image": "${{ steps.build-image.outputs.image }}",
+                "essential": true,
+                "portMappings": [
+                  {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp"
+                  }
+                ],
+                "environment": [
+                  {
+                    "name": "NODE_ENV",
+                    "value": "production"
+                  },
+                  {
+                    "name": "DB_HOST",
+                    "value": "$DB_HOST"
+                  },
+                  {
+                    "name": "DB_PORT",
+                    "value": "$DB_PORT"
+                  },
+                  {
+                    "name": "DB_USERNAME",
+                    "value": "$DB_USERNAME"
+                  },
+                  {
+                    "name": "DB_PASSWORD",
+                    "value": "$DB_PASSWORD"
+                  },
+                  {
+                    "name": "DB_DATABASE",
+                    "value": "$DB_DATABASE"
+                  },
+                  {
+                    "name": "OPENAI_API_KEY",
+                    "value": "$OPENAI_API_KEY"
+                  }
+                ]
+              }
+            ],
+            "requiresCompatibilities": [
+              "FARGATE"
+            ],
+            "networkMode": "awsvpc",
+            "cpu": "256",
+            "memory": "512",
+            "executionRoleArn": "arn:aws:iam::058632741234:role/ecsTaskExecutionRole"
+          }
+          EOF
+
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: .aws/task-definition.json
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
