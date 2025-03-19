@@ -1,5 +1,6 @@
 import { Response } from 'express';
-import { HttpResponseMessageBuilder } from '../model/HttpResponseMessage';
+import {HttpResponseMessageBuilder} from "../model/http-response-message";
+
 
 export function sendResponse(res: Response, data: any, totalCount: number | null = null): Response {
   const response = new HttpResponseMessageBuilder()

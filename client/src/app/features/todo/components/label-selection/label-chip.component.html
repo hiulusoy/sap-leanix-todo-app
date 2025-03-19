@@ -1,0 +1,38 @@
+<mat-form-field [class.has-labels]="selectedLabels.length > 0" class="full-width">
+  <mat-chip-grid #chipList>
+    @for (label of selectedLabels; track $index) {
+      <mat-chip
+        [removable]="true"
+        (removed)="removeLabel($index)"
+        class="label-chip"
+      >
+        {{ label }}
+        <button matChipRemove aria-label="Remove label">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+    }
+
+    <input
+      #labelInput
+      (matChipInputTokenEnd)="addLabelFromInput($event)"
+      [(ngModel)]="newLabelName"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      aria-label="New label"
+      matInput
+      placeholder="Add label..."
+    />
+  </mat-chip-grid>
+
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectLabel($event)">
+    @for (label of getFilteredLabels(); track label.id) {
+      <mat-option [value]="label.name">
+        {{ label.name }}
+      </mat-option>
+    } @empty {
+      <mat-option disabled>No matching labels found</mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>

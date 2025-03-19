@@ -1,0 +1,71 @@
+<div [class]="statusClass" [ngClass]="dueStatus" cdkDrag class="todo-card">
+  <div cdkDragHandle class="drag-handle">
+    <mat-icon>drag_indicator</mat-icon>
+  </div>
+
+  <div class="card-content">
+    <h4 class="todo-title">{{ item.title }}</h4>
+
+    @if (item.description) {
+      <p class="todo-description">{{ item.description }}</p>
+    }
+
+    @if (item.hasDueDate) {
+      <div class="todo-dates">
+        @if (item.startDate) {
+          <div class="date-row">
+            <mat-icon class="date-icon">event</mat-icon>
+            <span class="date-label">Start:</span>
+            <span class="date-value">{{ item.startDate | date:'mediumDate' }}</span>
+          </div>
+        }
+
+        @if (item.dueDate) {
+          <div class="date-row">
+            <mat-icon class="date-icon">event_busy</mat-icon>
+            <span class="date-label">Due:</span>
+            <span class="date-value">{{ item.dueDate | date:'mediumDate' }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    @if (item.labels && item.labels.length > 0) {
+      <div class="todo-labels">
+        <mat-chip-set>
+          @for (label of item.labels; track label) {
+            <mat-chip color="primary" [selected]="true">
+              {{ label }}
+            </mat-chip>
+          }
+        </mat-chip-set>
+      </div>
+    }
+
+    <div [class]="statusClass" class="todo-status">
+      {{ item.displayState || item.state }}
+    </div>
+  </div>
+
+  <div class="card-actions">
+    <button [matMenuTriggerFor]="menu" aria-label="Todo actions" mat-icon-button>
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <button (click)="updateTodo($event)" mat-menu-item>
+        <mat-icon>edit</mat-icon>
+        <span>Update</span>
+      </button>
+      <button (click)="deleteTodo($event)" class="delete-option" mat-menu-item>
+        <mat-icon>delete</mat-icon>
+        <span>Delete</span>
+      </button>
+    </mat-menu>
+  </div>
+
+  <!-- LeanIX Logo -->
+  <div class="leanix-logo">
+    <img alt="LeanIX Logo" src="assets/icons/leanix-logo-vector.svg">
+  </div>
+</div>
