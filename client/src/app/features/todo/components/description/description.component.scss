@@ -1,0 +1,16 @@
+.description-field-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+
+  .full-width {
+    width: 100%;
+  }
+
+  .generate-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+  }
+}

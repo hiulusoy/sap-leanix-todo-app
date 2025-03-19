@@ -1,12 +1,15 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {TodoModule} from './todo/todo.module';
 
 
 @NgModule({
-  declarations: [],
   imports: [
-    CommonModule
+    CommonModule,
+    TodoModule,
+  ],
+  exports: [
+    TodoModule,
   ]
 })
 export class FeaturesModule { }

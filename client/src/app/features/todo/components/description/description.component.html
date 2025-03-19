@@ -1,0 +1,25 @@
+<div [formGroup]="parentForm" class="description-field-container">
+  <mat-form-field class="full-width">
+    <mat-label>Description</mat-label>
+    <textarea
+      [formControlName]="formControlName"
+      matInput
+      placeholder="Enter description or at least 3 words for keyword-based generation"
+      rows="4">
+    </textarea>
+    <mat-hint *ngIf="!hasEnoughKeywords()">Enter a description or at least 3 keywords for auto-generation</mat-hint>
+    <mat-hint *ngIf="hasEnoughKeywords()">Keywords detected! Click auto-generate to expand them</mat-hint>
+  </mat-form-field>
+
+  <button
+    (click)="generateDescription()"
+    [disabled]="!parentForm.get('title')?.value || isGeneratingDescription"
+    aria-label="Auto-generate description"
+    class="generate-button"
+    color="primary"
+    mat-icon-button
+    type="button">
+    <mat-icon *ngIf="!isGeneratingDescription">auto_awesome</mat-icon>
+    <mat-spinner *ngIf="isGeneratingDescription" diameter="24"></mat-spinner>
+  </button>
+</div>
