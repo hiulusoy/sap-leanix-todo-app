@@ -13,6 +13,7 @@ env:
   ECS_SERVICE: leanix-todo-service
   ECS_CLUSTER: leanix-todo-app
   CONTAINER_NAME: leanix-todo-container
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
 permissions:
   contents: read
@@ -37,6 +38,8 @@ jobs:
 
       - name: Run server tests
         working-directory: ./server
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: npm test
 
       # Client testleri çalıştır
@@ -46,7 +49,7 @@ jobs:
 
       - name: Run client tests
         working-directory: ./client
-        run: npm test -- --watch=false --browsers=ChromeHeadless
+        run: npm run test -- --watch=false --no-progress --browsers=ChromeHeadless
 
   deploy:
     name: Deploy to ECS
