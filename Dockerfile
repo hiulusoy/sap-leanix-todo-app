@@ -46,7 +46,7 @@ COPY --from=server-build /app/dist ./dist
 COPY --from=server-build /app/node_modules ./node_modules
 
 # Copy frontend build output into the public folder
-COPY --from=ui-build /app/client/dist/client ./public
+COPY --from=ui-build /app/dist/client ./public
 
 # Expose the application's port
 EXPOSE 3000

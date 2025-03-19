@@ -1,5 +1,5 @@
 import {LabelModel} from './label.model';
-import {TodoPriority} from '../../../../../../server/modules/todo/enums/todo-priority.enum';
+import {TodoPriority} from '../enums/todo-priority.enum';
 
 export interface TodoModel {
   id: number;

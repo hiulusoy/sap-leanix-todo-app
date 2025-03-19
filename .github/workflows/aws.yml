@@ -1,12 +1,11 @@
 name: Deploy to Amazon ECS
 
 on:
-  push:
-    branches:
-      - 'release'
   pull_request:
     branches:
       - 'release'
+  workflow_dispatch:
+
 env:
   AWS_REGION: eu-central-1
   ECR_REGISTRY: 058632741234.dkr.ecr.eu-central-1.amazonaws.com
@@ -14,6 +13,7 @@ env:
   ECS_SERVICE: leanix-todo-service
   ECS_CLUSTER: leanix-todo-app
   CONTAINER_NAME: leanix-todo-container
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
 permissions:
   contents: read
@@ -30,25 +30,26 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
 
       # Server testleri çalıştır
       - name: Install server dependencies
         working-directory: ./server
-        run: npm ci
+        run: npm install
 
       - name: Run server tests
         working-directory: ./server
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: npm test
 
       # Client testleri çalıştır
       - name: Install client dependencies
         working-directory: ./client
-        run: npm ci
+        run: npm install
 
       - name: Run client tests
         working-directory: ./client
-        run: npm test -- --watch=false --browsers=ChromeHeadless
+        run: npm run test -- --watch=false --no-progress --browsers=ChromeHeadless
 
   deploy:
     name: Deploy to ECS
