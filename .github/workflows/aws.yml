@@ -33,7 +33,7 @@ jobs:
       # Server testleri çalıştır
       - name: Install server dependencies
         working-directory: ./server
-        run: npm ci
+        run: npm install
 
       - name: Run server tests
         working-directory: ./server
@@ -42,7 +42,7 @@ jobs:
       # Client testleri çalıştır
       - name: Install client dependencies
         working-directory: ./client
-        run: npm ci
+        run: npm install
 
       - name: Run client tests
         working-directory: ./client
