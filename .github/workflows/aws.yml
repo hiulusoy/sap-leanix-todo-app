@@ -6,6 +6,7 @@ on:
       - 'release'
   workflow_dispatch:
 
+
 env:
   AWS_REGION: eu-central-1
   ECR_REGISTRY: 058632741234.dkr.ecr.eu-central-1.amazonaws.com
@@ -15,10 +16,12 @@ env:
   CONTAINER_NAME: leanix-todo-container
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
+
 permissions:
   contents: read
 
 jobs:
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -56,6 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: test  # Test job'unun başarıyla tamamlanmasını bekle
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
